@@ -1,16 +1,20 @@
-import { getEstoque, transacaoNoEstoque } from "./estoque.js";
+import { getEstoque, limpaEstoque, transacaoNoEstoque } from "./estoque.js";
 
-const olJoao = document.querySelector('#joao');
-const olMaria = document.querySelector('#maria');
+const olJoao = document.querySelector("#joao");
+const olMaria = document.querySelector("#maria");
 
 document.entrada.addEventListener('submit', leFormulario);
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('#buttonLimparLista').addEventListener('click', () => {
+        limpaEstoque();
+        atualizaTela();
+    })
+})
 
 atualizaTela();
-
-function leFormulario(event){
-
+function leFormulario(event) {
     event.preventDefault();
-    const quantidade = document.entrada.quantidade.valueAsNumber;
+    const quantidade = Number(document.entrada.quantidade.value);
     const fruta = document.entrada.fruta.value;
     const origem = document.entrada.origem.value;
     const destino = document.entrada.destino.value;
@@ -23,18 +27,25 @@ function leFormulario(event){
 
 function atualizaTela(){
     const estoque = getEstoque();
-    preencheLista(olJoao, estoque.joao);
-    preencheLista(olMaria, estoque.maria);
+    olJoao.innerHTML = "";
+    olMaria.innerHTML = "";
+    document.entrada.quantidade.value = 1;
+    document.entrada.fruta.value = "maca";
+    if(estoque.joao && estoque.joao.length > 0){
+        preencheLista(olJoao, estoque.joao);
+    }
+    if(estoque.maria && estoque.maria.length > 0){
+        preencheLista(olMaria, estoque.maria);
+    }
+    
 }
 
-function preencheLista(lista, estoqueDaPessoa) {
+function preencheLista(lista, estoqueDaPessoa){
     lista.innerHTML = "";
-    for(let i=0;i<estoqueDaPessoa.length; i++){
+    for(let i = 0; i < estoqueDaPessoa.length; i++){
         const monte = estoqueDaPessoa[i];
         const li = document.createElement('li');
-        li.textContent = `${monte.tipo}: ${monte.qtd}`;
-        lista.append(li);
+        li.textContent = `${monte.tipo}: ${monte.quantidade}`;
+        lista.appendChild(li);
     }
 }
-
-
